@@ -5,7 +5,6 @@ on:
   pull_request:
     branches:
       - '*'
-
 env:
   AZURE_WEBAPP_NAME: vote-client    # set this to your application's name
   AZURE_WEBAPP_PACKAGE_PATH: './build'      # set this to the path to your web app project, defaults to the repository root
