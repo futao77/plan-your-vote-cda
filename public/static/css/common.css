@@ -60,11 +60,15 @@ nav {
 }
 
 .candi-section {
-  margin-top: 40px;
+  margin-top: 80px;
 }
 
 .candi-summary{
   margin: 40px 0;
+}
+
+.reviewHeaderTitle {
+	margin-top: 60px;
 }
 
 @media (min-width: 768px) {
