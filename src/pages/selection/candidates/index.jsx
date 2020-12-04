@@ -50,14 +50,17 @@ class Candidates extends Component {
       if (this._isMounted) {
         const { stepTitle, stepDescription, stepNumber } = response.step;
         let races = response.races.races;
+        races.sort((a, b) => {
+          return a.ballotOrder - b.ballotOrder;
+        });
         for (const race of races) {
           race.candidates.sort((a, b) => {
             return a.ballotOrder - b.ballotOrder;
           });
         }
         this.setState({
-          races: response.races.races,
-          filteredRaces: response.races.races,
+          races: races,
+          filteredRaces: races,
           candidatesHeader: {
             stepTitle,
             stepDescription,
