@@ -1,3 +1,5 @@
+import moment from "moment";
+
 const pdfjs = require('pdfjs');
 const logo = require('contents/pdf-logo.jpg')
 const check = require('contents/check.jpg')
@@ -60,18 +62,20 @@ function buildFirstPage(doc, logo, data) {
     header.cell().text({ textAlign: 'left', fontSize: 40 })
         .add('My Summary')
 
-
+    const p = pollingPlace();
     let cell = doc.cell({ paddingBottom: 0.5 * pdfjs.cm, borderBottomWidth: 1.5 * pdfjs.mm, lineHeight: 2 })
     cell.text('MY VOTING DAY:', { fontSize: 16, font: fonts.HelveticaBold })
-    cell.text({ fontSize: 14, lineHeight: 1.35 })
-        .add('Voting day:', { fontSize: 13, font: fonts.HelveticaBold })
-        .add('    Not Selected', { fontSize: 12 })
-    cell.text({ fontSize: 14, lineHeight: 1.35 })
-        .add('Location:', { fontSize: 13, font: fonts.HelveticaBold })
-        .add('        Not Selected', { fontSize: 12 })
-    cell.text({ fontSize: 14, lineHeight: 1.35 })
-        .add('Poll Type:', { fontSize: 13, font: fonts.HelveticaBold })
-        .add('       Not Selected', { fontSize: 12 })
+    p.forEach(element => {
+        cell.text({ fontSize: 14, lineHeight: 1.35 })
+            .add('Voting day:', { fontSize: 13, font: fonts.HelveticaBold })
+            .add(element.dates, { fontSize: 12 })
+        cell.text({ fontSize: 14, lineHeight: 1.35 })
+            .add('Location:', { fontSize: 13, font: fonts.HelveticaBold })
+            .add(element.location, { fontSize: 12 })
+        /* cell.text({ fontSize: 14, lineHeight: 1.35 })
+            .add('Poll Type:', { fontSize: 13, font: fonts.HelveticaBold })
+            .add('       Not Selected', { fontSize: 12 }) */
+    })
 
     cell = doc.cell({ paddingBottom: 0.5 * pdfjs.cm, borderBottomWidth: 1.5 * pdfjs.mm, lineHeight: 2 })
     cell.text('WHAT TO BRING', { fontSize: 16, font: fonts.HelveticaBold })
@@ -137,6 +141,27 @@ const mcQ = () => {
         title: mcQuestions.ballotIssueTitle,
         answer: mcQuestions.ballotIssueAnswer,
         description: mcQuestions.ballotIssueDescription
+    }));
+};
+
+const pollingPlace = () => {
+    const data = JSON.parse(sessionStorage.getItem('pollingPlace'));
+    if (!data) {
+        return null;
+    }
+    const pDates = [];
+    data[0].pollingPlaceDates.forEach(d => {
+        pDates.push( '\n   ' 
+            + moment(d.pollingDate).format('MMMM Do YYYY')
+            + ' (' 
+            + moment(d.startTime).format('LT')
+            + ' - ' 
+            + moment(d.endTime).format('LT')
+            + ')');
+    })
+    return data.map(p => ({
+        location: '\n   ' + p.pollingPlaceName + '\n   ' + p.pollingStationName + '\n   ' + p.address,
+        dates: pDates.join(' ')
     }));
 };
 

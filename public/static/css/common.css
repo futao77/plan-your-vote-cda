@@ -97,3 +97,13 @@ footer > .container {
 footer #footer-nav {
   padding-left: 0;
 }
+
+.ics-email {
+  border-bottom: 1px solid #B2B2B2;
+  padding-bottom: 15px;
+}
+
+.ics-choice > p {
+  border-top: 1px solid #B2B2B2;
+  padding-top: 15px;
+}
