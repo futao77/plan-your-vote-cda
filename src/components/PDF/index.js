@@ -72,9 +72,11 @@ function buildFirstPage(doc, logo, data) {
         cell.text({ fontSize: 14, lineHeight: 1.35 })
             .add('Location:', { fontSize: 13, font: fonts.HelveticaBold })
             .add(element.location, { fontSize: 12 })
-        /* cell.text({ fontSize: 14, lineHeight: 1.35 })
-            .add('Poll Type:', { fontSize: 13, font: fonts.HelveticaBold })
-            .add('       Not Selected', { fontSize: 12 }) */
+        if (element.advanceOnly){
+            cell.text({ fontSize: 14, lineHeight: 1.35 })
+                .add('Poll Type:', { fontSize: 13, font: fonts.HelveticaBold })
+                .add('Advance only', { fontSize: 12 })  
+        }
     })
 
     cell = doc.cell({ paddingBottom: 0.5 * pdfjs.cm, borderBottomWidth: 1.5 * pdfjs.mm, lineHeight: 2 })
@@ -161,7 +163,8 @@ const pollingPlace = () => {
     })
     return data.map(p => ({
         location: '\n   ' + p.pollingPlaceName + '\n   ' + p.pollingStationName + '\n   ' + p.address,
-        dates: pDates.join(' ')
+        dates: pDates.join(' '),
+        advanceOnly: p.advanceOnly
     }));
 };
 
