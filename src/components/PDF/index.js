@@ -65,20 +65,24 @@ function buildFirstPage(doc, logo, data) {
     const p = pollingPlace();
     let cell = doc.cell({ paddingBottom: 0.5 * pdfjs.cm, borderBottomWidth: 1.5 * pdfjs.mm, lineHeight: 2 })
     cell.text('MY VOTING DAY:', { fontSize: 16, font: fonts.HelveticaBold })
-    p.forEach(element => {
-        cell.text({ fontSize: 14, lineHeight: 1.35 })
-            .add('Voting day:', { fontSize: 13, font: fonts.HelveticaBold })
-            .add(element.dates, { fontSize: 12 })
-        cell.text({ fontSize: 14, lineHeight: 1.35 })
-            .add('Location:', { fontSize: 13, font: fonts.HelveticaBold })
-            .add(element.location, { fontSize: 12 })
-        if (element.advanceOnly){
+    if (p != null) {
+        p.forEach(element => {
             cell.text({ fontSize: 14, lineHeight: 1.35 })
-                .add('Poll Type:', { fontSize: 13, font: fonts.HelveticaBold })
-                .add('Advance only', { fontSize: 12 })  
-        }
-    })
-
+                .add('Voting day:', { fontSize: 13, font: fonts.HelveticaBold })
+                .add(element.dates, { fontSize: 12 })
+            cell.text({ fontSize: 14, lineHeight: 1.35 })
+                .add('Location:', { fontSize: 13, font: fonts.HelveticaBold })
+                .add(element.location, { fontSize: 12 })
+            if (element.advanceOnly){
+                cell.text({ fontSize: 14, lineHeight: 1.35 })
+                    .add('Poll Type:', { fontSize: 13, font: fonts.HelveticaBold })
+                    .add('Advance only', { fontSize: 12 })  
+            }
+        })
+    } else {
+        cell.text({ fontSize: 14, lineHeight: 1.35 })
+            .add('NO LOCATION IS SELECTED', { fontSize: 13, font: fonts.Helvetica});
+    }
     cell = doc.cell({ paddingBottom: 0.5 * pdfjs.cm, borderBottomWidth: 1.5 * pdfjs.mm, lineHeight: 2 })
     cell.text('WHAT TO BRING', { fontSize: 16, font: fonts.HelveticaBold })
     cell.text({ lineHeight: 1.35 })
@@ -99,7 +103,9 @@ function buildFirstPage(doc, logo, data) {
 }
 
 const renderCandidates = (race, candidatesSelected) => {
-
+    if (candidatesSelected == null) {
+        return null;
+    }
     return candidatesSelected.map(candidate => {
         if (!candidate) {
             return null;
@@ -169,18 +175,20 @@ const pollingPlace = () => {
 };
 
 function addRows(names, selection, table, check) {
-    const filteredData = selection.filter(item => !!item).map(item => item.candidate.name);
-    const rowCount = Math.ceil(names.length / 4);
-    for (let row = 0; row < rowCount; row++) {
-        const tr = table.row({ font: fonts.Helvetica, borderBottomWidth: 1.5, });
-        const list = [...Array(4)].map((_, index) => names[row + rowCount * index]);
-        list.forEach(element => {
-            if (filteredData.includes(element)) {
-                tr.cell(element, bold_cell).image(check, {});
-            } else {
-                tr.cell(element, normal_cell);
-            }
-        });
+    if(selection!=null){
+        const filteredData = selection.filter(item => !!item).map(item => item.candidate.name);
+        const rowCount = Math.ceil(names.length / 4);
+        for (let row = 0; row < rowCount; row++) {
+            const tr = table.row({ font: fonts.Helvetica, borderBottomWidth: 1.5, });
+            const list = [...Array(4)].map((_, index) => names[row + rowCount * index]);
+            list.forEach(element => {
+                if (filteredData.includes(element)) {
+                    tr.cell(element, bold_cell).image(check, {});
+                } else {
+                    tr.cell(element, normal_cell);
+                }
+            });
+        }
     }
 }
 
@@ -189,16 +197,20 @@ function buildLastPage(doc) {
     const header = doc.header().table({ widths: [null], paddingBottom: 1 * pdfjs.cm }).row()
     header.cell().text('MY PLANNED RESPONSES TO CAPITAL PLAN BORROWING QUESTIONS:', { textAlign: 'center', fontSize: 18, font: fonts.HelveticaBold });
 
+    if (mcqdata != null){
+        mcqdata.forEach(element => {
+            let cell = doc.cell({ paddingTop: 0.5 * pdfjs.cm, paddingBottom: 0.5 * pdfjs.cm, borderBottomWidth: 1.5 * pdfjs.mm, lineHeight: 1 });
+            cell.text(element.title, { fontSize: 16, font: fonts.HelveticaBold });
+            cell.text({ fontSize: 14, lineHeight: 1.35 })
+                .add(element.description, { fontSize: 13, font: fonts.Helvetica })
+            cell.text({ fontSize: 14, lineHeight: 1.35 })
+                .add(`Your Answer: ${element.answer}`, { fontSize: 13, font: fonts.HelveticaBold })
 
-    mcqdata.forEach(element => {
+        })
+    } else {
         let cell = doc.cell({ paddingTop: 0.5 * pdfjs.cm, paddingBottom: 0.5 * pdfjs.cm, borderBottomWidth: 1.5 * pdfjs.mm, lineHeight: 1 });
-        cell.text(element.title, { fontSize: 16, font: fonts.HelveticaBold });
-        cell.text({ fontSize: 14, lineHeight: 1.35 })
-            .add(element.description, { fontSize: 13, font: fonts.Helvetica })
-        cell.text({ fontSize: 14, lineHeight: 1.35 })
-            .add(`Your Answer: ${element.answer}`, { fontSize: 13, font: fonts.HelveticaBold })
-
-    })
+        cell.text('NO QUESTIONS ARE SELECTED', { fontSize: 13, font: fonts.Helvetica });
+    }
 }
 
 function buildMiddlePage(doc, check, data) {
@@ -209,21 +221,23 @@ function buildMiddlePage(doc, check, data) {
     const header = doc.header().table({ widths: [null], paddingBottom: 1 * pdfjs.cm }).row()
     header.cell().text({ textAlign: 'center', fontSize: 16, font: fonts.HelveticaBold })
         .add('MY CANDIDATES SORTED BY BALLOT ORDER')
-
-
-    allNames.forEach((ballot, index, ballots) => {
-        const { positionName, numberNeeded } = ballot;
-        const candidates = ballot.candidates.map(candidate => candidate.name)
+    if(candidatesSelected != null){
+        allNames.forEach((ballot, index, ballots) => {
+            const { positionName, numberNeeded } = ballot;
+            const candidates = ballot.candidates.map(candidate => candidate.name)
+            let cell = doc.cell({ paddingBottom: 0.5 * pdfjs.cm, borderBottomWidth: 1.5 * pdfjs.mm, lineHeight: 2 })
+            // cell.text('MY CANDIDATES SORTED BY BALLOT ORDER', { fontSize: 16, font: fonts.HelveticaBold })
+            cell.text({ lineHeight: 1.35 })
+                .add(candidatesSummary(positionName, numberNeeded), { fontSize: 13, font: fonts.HelveticaBold })
+            let table = doc.table(tableStyle)
+            addRows(candidates, renderCandidates(positionName, candidatesSelected), table, check);
+            if (index !== ballots.length - 1)
+                doc.pageBreak()
+        });
+    } else{
         let cell = doc.cell({ paddingBottom: 0.5 * pdfjs.cm, borderBottomWidth: 1.5 * pdfjs.mm, lineHeight: 2 })
-        // cell.text('MY CANDIDATES SORTED BY BALLOT ORDER', { fontSize: 16, font: fonts.HelveticaBold })
-        cell.text({ lineHeight: 1.35 })
-            .add(candidatesSummary(positionName, numberNeeded), { fontSize: 13, font: fonts.HelveticaBold })
-        let table = doc.table(tableStyle)
-        addRows(candidates, renderCandidates(positionName, candidatesSelected), table, check);
-        if (index !== ballots.length - 1)
-            doc.pageBreak()
-    });
-
+        cell.text('NO CANDIDATES ARE SELECTED', { fontSize: 13, font: fonts.Helvetica});
+    }
 }
 
 
