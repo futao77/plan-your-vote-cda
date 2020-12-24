@@ -6,7 +6,7 @@ import SectionHeader from 'components/SectionHeader';
 const introTipsDummy = [
   {
     order: 1,
-    content: `Browse candidates for mayor, councillor, Park Board commissioner, and school trustee, then add your favourites to your plan.`
+    content: `1) Browse candidates for mayor, councillor, Park Board commissioner, and school trustee, then add your favourites to your plan.`
   },
   {
     order: 2,

@@ -5,6 +5,8 @@
   "dependencies": {
     "@mapbox/mapbox-gl-geocoder": "^4.3.0",
     "axios": "^0.18.0",
+    "babel-cli": "^6.26.0",
+    "babel-preset-react-app": "^3.1.2",
     "mapbox": "^1.0.0-beta10",
     "mapbox-gl": "^0.54.0",
     "moment": "^2.29.1",
@@ -38,5 +40,20 @@
       "last 1 safari version"
     ]
   },
-  "homepage": "http://pyv-cda.azurewebsites.net"
+  "homepage": "http://pyv-cda.azurewebsites.net",
+  "description": "Open Voting Tool",
+  "main": "webpack.config.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/futao77/plan-your-vote-cda.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/futao77/plan-your-vote-cda/issues"
+  }
 }
